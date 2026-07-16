@@ -1,0 +1,162 @@
+id: 1
+name: yolo-training-pipeline
+program:
+  id: applied-computer-vision
+  narrative_fit: "Establishes the reproducible training, held-out evaluation, checkpoint, and inference evidence contract consumed by later vision serving and domain-specific computer-vision repositories."
+  shared_assets:
+    - deterministic YOLO-format dataset generator and manifest
+    - annotation and split validation rules
+    - best-checkpoint identity contract
+    - schema-versioned vision model bundle
+    - held-out detection metric mapping
+    - warmed per-image latency benchmark
+status: specified
+claim: "One local CPU Docker command generates a deterministic detection fixture, validates YOLO annotations, trains YOLO26 from architecture without downloading weights, evaluates held-out mAP, emits a verifiable model bundle, reloads the best checkpoint, and measures warmed inference latency."
+stack:
+  - python-3.12.13
+  - ultralytics-8.4.96
+  - pytorch-2.13.0-cpu
+  - torchvision-0.28.0-cpu
+  - pytest-9.1.1
+  - ruff-0.15.21
+  - docker
+language_profile:
+  primary: python
+  secondary: []
+  reason: "Python and PyTorch provide the native training and vision ecosystem; the repository remains CLI-only because the proof is artifact production and measurement, not serving."
+decision_brain:
+  agentic_spec:
+    source: .portfolio/decision-brain/agentic-spec-governance.yaml
+    spec_store: portfolio-reuse-kit
+    schema: portfolio-system
+    project_config: openspec/config.yaml
+    component_pack: applied-computer-vision
+    artifact_graph:
+      - intent->portfolio-impact->architecture-record
+      - architecture-record+portfolio-impact->component-pack
+      - component-pack->reuse-delta->benchmark-proof->tasks->verification
+  agent_graph:
+    mode: principal-agent-orchestrated
+    source: .portfolio/decision-brain/agent-graph.yaml
+    handoff: sdd/agent-handoff.md
+    local_first_runtime: docker
+  reuse_improvement_loop:
+    source: .portfolio/decision-brain/reuse-improvement-loop.yaml
+    review_path: sdd/reuse-improvement-review.md
+    current_status: cv-skill-patched-awaiting-runtime-proof
+  principles:
+    coupling_rule: "Dataset contracts, annotation validation, metric mapping, and benchmark aggregation import no Ultralytics trainer, cloud SDK, API framework, broker, database, or UI."
+    solid: [srp, ocp, lsp, isp, dip]
+    simplicity_rule: "Use one generated fixture, one YOLO26 nano architecture, one best checkpoint, one held-out evaluator, and one latency path; add serving, export targets, or GPU only in repositories whose benchmark requires them."
+    testability_rule: "Annotation math, manifest integrity, split isolation, percentiles, and multi-run aggregation execute without training; Docker proves the framework integration."
+    rejected_overengineering:
+      - model registry or Airflow
+      - API or frontend
+      - Kafka or RabbitMQ
+      - cloud storage or Kumo
+      - distributed or multi-GPU training
+      - multiple export runtimes
+  stack_profile: python-ml
+  api_style: cli
+  messaging: none
+  cloud:
+    mode: none
+    local_provider: none
+    real_provider_target: none
+    emulated_services: []
+    adapter_rule: "No cloud behavior exists; if a later artifact store uses AWS, define a storage port and verify its behavior with Kumo before real AWS."
+    config_switch: not-applicable
+    unsupported_behaviors:
+      - managed training
+      - object storage
+      - GPU scheduling
+  database: none
+  runtime: "Python 3.12.13 slim image pinned by OCI index digest with CPU-only PyTorch; no runtime network or credential."
+  library_policy: "Use current pinned Ultralytics for the explicit YOLO claim, CPU-only PyTorch for the universal path, standard-library/Pillow fixture generation, pytest for pure contracts, and AGPL-3.0 for license compatibility."
+  record_path: sdd/technical-decision.md
+  rejected_options:
+    - option: TorchVision detection model
+      reason: "Permissive and valid for generic detection, but it would not prove the named YOLO workflow in this repository."
+    - option: pretrained YOLO26 weights
+      reason: "They improve quality but introduce an implicit mutable download; architecture-only training keeps the default run offline and fully attributable."
+    - option: COCO8
+      reason: "It is an official smoke fixture but downloads on first use and has only four validation images; a generated fixture better proves deterministic pipeline mechanics."
+    - option: GPU default
+      reason: "It breaks universal execution and makes CI hardware-dependent; GPU benchmarking belongs in an explicit follow-up profile."
+    - option: ONNX export
+      reason: "Export-format comparison is a separate deployment question; this repository first proves native checkpoint quality and latency."
+architecture:
+  style: pipeline
+  reason: "The dominant force is an ordered transition from fixture and annotations to validated split, trained checkpoint, held-out metrics, reloaded inference, and benchmark evidence."
+  problem_forces:
+    domain_complexity: medium
+    integration_pressure: medium
+    ui_state_complexity: none
+    data_or_ml_reproducibility: high
+    auditability: high
+    throughput_or_async: low
+    independent_deployability: low
+  dependency_rule: "The Ultralytics adapter consumes validated local artifacts and emits checkpoint/metric records; pure dataset and benchmark policy never import the training framework."
+  boundaries:
+    - deterministic image and YOLO annotation generation
+    - annotation and split contract
+    - Ultralytics training and validation adapter
+    - best-checkpoint artifact contract
+    - versioned model manifest and checkpoint bundle
+    - warmed inference measurement
+    - benchmark aggregation and JSON evidence
+  rejected_alternatives:
+    - style: layered-mvc
+      reason: "Request/controller layers do not represent the ordered artifact lifecycle."
+    - style: hexagonal-as-primary
+      reason: "A few pure boundaries are useful, but interchangeable external actors are not the dominant force."
+    - style: notebook-first
+      reason: "Interactive state weakens the one-command, cross-platform, evidence-first contract."
+    - style: microservices
+      reason: "There is one local training proof and no independent deployment or scaling need."
+model_artifact:
+  role: producer
+  schema_version: 1
+  contract_path: .portfolio/contracts/vision-model-artifact.schema.json
+  manifest_name: model-manifest.json
+  checkpoint_name: best.pt
+  integrity: sha256-before-publication
+  evaluation_split: held-out
+  latency_protocol: reload-warmup-measure
+  runtime_network_required: false
+design_system:
+  tokens: .portfolio/design-system/tokens.yaml
+  readme_components:
+    - readme_header
+    - benchmark_card
+    - architecture_card
+    - references_table
+  diagram_required: true
+reuse:
+  kit_version: cv-skill-update-pending-publication
+  uses:
+    - catalog
+    - programs
+    - component-packs
+    - openspec-schema
+    - decision-brain
+    - agent-graph
+    - reuse-improvement-loop
+    - architecture-selector
+    - python-language-profile
+    - python-computer-vision
+    - design-system
+    - sdd
+    - benchmark-contract
+    - skills
+benchmark:
+  primary_metric: map50_95_median
+  unit: ratio
+  command: "docker run --rm yolo-training-pipeline"
+  result_path: benchmarks/results/summary.json
+  evidence_status: pending
+release:
+  docker: "docker run --rm yolo-training-pipeline"
+  no_secret_default_path: true
+  readme_has_number: true
+  references_documented: true

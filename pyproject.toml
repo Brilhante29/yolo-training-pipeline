@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools==82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yolo-training-pipeline"
+version = "0.1.0"
+description = "Offline, CPU-first YOLO training, held-out evaluation, and latency benchmark."
+requires-python = "==3.12.*"
+license = "AGPL-3.0-only"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["yolo_training_pipeline"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 96
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"

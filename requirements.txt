@@ -1,0 +1,5 @@
+setuptools==82.0.1
+ultralytics==8.4.96
+pytest==9.1.1
+pytest-cov==7.0.0
+ruff==0.15.21

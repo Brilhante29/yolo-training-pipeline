@@ -1,0 +1,6 @@
+path: test-runtime/b
+train: images/train
+val: images/val
+names:
+  0: warm_rectangle
+  1: cool_ellipse

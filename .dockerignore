@@ -1,0 +1,12 @@
+.git
+.github
+.claude
+.codex
+.portfolio
+benchmarks/results/*.json
+data
+runs
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache

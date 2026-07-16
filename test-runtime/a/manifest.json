@@ -1,0 +1,125 @@
+{
+  "classes": [
+    "warm_rectangle",
+    "cool_ellipse"
+  ],
+  "counts": {
+    "train": 6,
+    "val": 4
+  },
+  "dataset_sha256": "c206acc4a6647c124cecb91877908414b5dbb9d3583f708d24516fc49bc0a95f",
+  "format": "yolo-detection",
+  "image_size": [
+    96,
+    96
+  ],
+  "license": "generated project fixture under AGPL-3.0-only",
+  "seed": 42,
+  "source": "deterministic synthetic generator",
+  "splits": {
+    "train": [
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0000.png",
+        "image_sha256": "7cc304ca7f4ebbe0ce6f940f7d0eb07feb61c2f778a2b507221b5db784acbbe8",
+        "label": "labels/train/train-0000.txt",
+        "label_sha256": "85c9b4d72f216de8d9e80904d19d547b1cb4c79769b863b3b1ea9819be726389"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0001.png",
+        "image_sha256": "24b0564a2c09ed55a0ec9ea7df1075d48a92aa24309a68625da11bbcdb7a0d31",
+        "label": "labels/train/train-0001.txt",
+        "label_sha256": "2a199f04e6e75015b941f8dd0167112289e8ea4ab6f6576ba352e09e4d3d0bde"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0002.png",
+        "image_sha256": "67c66a7a180489543bd4668da07e464ae33b704ce3022652ce9beb52a5635cd3",
+        "label": "labels/train/train-0002.txt",
+        "label_sha256": "a6eb624d95650eca1a4173ac799e4aff56ed1bc0c22ef33184d412832c596492"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0003.png",
+        "image_sha256": "33a067deadb7f1f2106d2e38e9890a42b3840e864f68359cdef8ebdb63ad1b89",
+        "label": "labels/train/train-0003.txt",
+        "label_sha256": "e275ef467c2b50fa42dc72afdc0f4ed1dffc3e232df7ce61485a1f780b82df33"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0004.png",
+        "image_sha256": "388d812376c0636163692fde7a1adfad6e23ed97be954b9d4a3a90457c892332",
+        "label": "labels/train/train-0004.txt",
+        "label_sha256": "b9196c7a5d93180a2f369efadbd97ba9ec5abddf8af88893cf6b618da9990c78"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/train/train-0005.png",
+        "image_sha256": "edb7660b550b00602b1bc926730aa498286623d69d2bb0ad8d1f453d52449712",
+        "label": "labels/train/train-0005.txt",
+        "label_sha256": "af49aec5d3afbfd26497fc75b3d1467f36b0d66b2b14374450c39e7b657dc197"
+      }
+    ],
+    "val": [
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/val/val-0000.png",
+        "image_sha256": "74740de2651e08d134f310144152de419418ff3a6816739201c70bc791fb15ca",
+        "label": "labels/val/val-0000.txt",
+        "label_sha256": "d37b504073599ad4cfbc479510b6564ca87adb397b94ed46bd6b8dc5a9cae45c"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/val/val-0001.png",
+        "image_sha256": "ebb540556a4c9da27d1dafad73879924f6f729e6792e1f80473f37f00a0b597e",
+        "label": "labels/val/val-0001.txt",
+        "label_sha256": "cb1613a02030394ef168d85098bfef555c342d05475cfaa626de1790470fda50"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/val/val-0002.png",
+        "image_sha256": "6874934d1638e090ab896ad593dba3630c6b3342fb7745f150c6f842ef67c066",
+        "label": "labels/val/val-0002.txt",
+        "label_sha256": "55e5f44e2e4f580e68d248308e17511a7770b566e833c638c6e8d1caa91acaf2"
+      },
+      {
+        "dimensions": [
+          96,
+          96
+        ],
+        "image": "images/val/val-0003.png",
+        "image_sha256": "f8a6bfbb9e7817c17b0026da45b7c6562618eccc71436ec9950cd27c260aec0e",
+        "label": "labels/val/val-0003.txt",
+        "label_sha256": "1b95f33229e25b23122001d5a2c3e2a4fcdca518607cb2385259dbc3a1a2ad1d"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"timestamp": "2026-07-15T00:00:00+00:00", "environment": {"device": "cpu"}, "failures": 0, "metrics": {"map50_95": 0.4, "inference_latency_ms_p95": 12, "training_seconds": 30}, "proof": {"dataset_sha256": "same", "model_architecture": "yolo26n.yaml", "checkpoint_reloaded": true}}
