@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for implementation; dependency resolution and runtime proof pending.
+Accepted; dependency resolution, Docker, and runtime benchmark confirmed.
 
 ## Selected Stack
 
@@ -28,6 +28,12 @@ Accepted for implementation; dependency resolution and runtime proof pending.
 - 10 warmup images, 60 measured batch-1 predictions.
 - Framework analytics synchronization disabled.
 - No runtime download of model weights or data.
+
+## Recorded Runtime Evidence
+
+- Image: `sha256:2ca7c9aa87e939aa66f09f41ae7d098ea864ce7d8dd19db6491e982ff74c412f` (`1,842,427,744` bytes).
+- Three successful CPU runs on the same image and fixture produced median held-out mAP50-95 `0.002420` and warmed p95 `68.303 ms/image`.
+- The container embeds a local Matplotlib font under the Ultralytics filename expected by the ASCII fixture, avoiding the auxiliary font download path.
 
 ## Metric Mapping
 

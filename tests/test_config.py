@@ -33,3 +33,10 @@ def test_settings_reject_non_stride_aligned_image(monkeypatch) -> None:
 
     with pytest.raises(ValueError, match="divisible by 32"):
         Settings.from_env()
+
+
+def test_settings_reject_non_positive_values(monkeypatch) -> None:
+    monkeypatch.setenv("YOLO_BATCH_SIZE", "0")
+
+    with pytest.raises(ValueError, match="greater than zero"):
+        Settings.from_env()

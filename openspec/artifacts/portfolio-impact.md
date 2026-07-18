@@ -27,4 +27,4 @@ This repository is not a standalone demo. It is one part of the Applied Computer
 
 ## Post Angle
 
-Open with map50_95_median = pending, then explain why the architecture and local-first path make the result reproducible.
+Open with map50_95_median = 0.002420, then explain why the architecture and local-first path make the result reproducible.

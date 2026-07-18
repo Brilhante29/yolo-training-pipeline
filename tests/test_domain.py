@@ -33,11 +33,31 @@ def test_box_validation_rejects_invalid_annotations(box: YoloBox) -> None:
         box.validate(class_count=2)
 
 
+@pytest.mark.parametrize(
+    "box",
+    [YoloBox(0, 0.5, 0.5, 0.0, 0.2), YoloBox(0, 0.5, 0.5, 0.2, 0.0)],
+)
+def test_box_validation_rejects_empty_dimensions(box: YoloBox) -> None:
+    with pytest.raises(ValueError, match="greater than zero"):
+        box.validate(class_count=2)
+
+
+def test_box_parser_rejects_wrong_column_count() -> None:
+    with pytest.raises(ValueError, match="five values"):
+        YoloBox.from_line("0 0.5 0.5 0.2")
+
+
 def test_nearest_rank_percentile_is_explicit() -> None:
     values = [5.0, 1.0, 3.0, 2.0, 4.0]
 
     assert nearest_rank_percentile(values, 0.50) == 3.0
     assert nearest_rank_percentile(values, 0.95) == 5.0
+
+
+@pytest.mark.parametrize("quantile", [0.0, 1.1])
+def test_nearest_rank_percentile_rejects_invalid_input(quantile: float) -> None:
+    with pytest.raises(ValueError):
+        nearest_rank_percentile([1.0], quantile)
 
 
 def _write_run(path: Path, map_value: float, latency: float, training: float) -> None:
@@ -75,3 +95,20 @@ def test_aggregation_requires_three_successful_runs(tmp_path: Path) -> None:
     assert summary["value"] == 0.5
     assert summary["metrics"]["inference_latency_ms_p95_median"] == 11.0
     assert summary["proof"]["dataset_sha256_identical"] is True
+
+
+def test_aggregation_rejects_too_few_runs(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="three successful"):
+        aggregate_results([tmp_path / "run-1.json"])
+
+
+def test_aggregation_rejects_failed_runs(tmp_path: Path) -> None:
+    paths = [tmp_path / f"run-{index}.json" for index in range(1, 4)]
+    for path in paths:
+        _write_run(path, 0.5, 11.0, 31.0)
+    failed = json.loads(paths[0].read_text(encoding="utf-8"))
+    failed["failures"] = 1
+    paths[0].write_text(json.dumps(failed), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Failed runs"):
+        aggregate_results(paths)

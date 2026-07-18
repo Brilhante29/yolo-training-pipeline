@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VisionModelArtifact",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task",
+    "format",
+    "framework",
+    "model",
+    "input",
+    "classes",
+    "checkpoint",
+    "provenance",
+    "metrics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "task": { "const": "detection" },
+    "format": { "const": "ultralytics-pt" },
+    "framework": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "ultralytics" },
+        "version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "required": ["architecture", "parameters"],
+      "properties": {
+        "architecture": { "type": "string", "minLength": 1 },
+        "parameters": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "required": ["height", "width", "channels", "color_space", "dtype", "batch"],
+      "properties": {
+        "height": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "channels": { "const": 3 },
+        "color_space": { "const": "RGB" },
+        "dtype": { "const": "uint8" },
+        "batch": { "const": 1 }
+      },
+      "additionalProperties": false
+    },
+    "classes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 0 },
+          "name": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "required": ["file", "sha256", "bytes"],
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["dataset_sha256", "seed", "initialization", "source_repository", "created_at"],
+      "properties": {
+        "dataset_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "seed": { "type": "integer" },
+        "initialization": { "type": "string", "minLength": 1 },
+        "source_repository": { "type": "string", "minLength": 1 },
+        "created_at": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    }
+  }
+}

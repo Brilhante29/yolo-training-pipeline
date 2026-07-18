@@ -55,3 +55,11 @@ Repeat three times with the same image content and mounted outputs named `run-1.
 ## Publication Gate
 
 The README number must come from `benchmarks/results/summary.json`. Three successful runs, focused coverage, complete Docker integration, license validation, and green CI are mandatory.
+
+## Recorded Result
+
+- Image: `sha256:2ca7c9aa87e939aa66f09f41ae7d098ea864ce7d8dd19db6491e982ff74c412f` (`1,842,427,744` bytes).
+- Runs: `run-1.json`, `run-2.json`, and `run-3.json`; all completed with `failures=0`, identical dataset hash, and checkpoint reload proof.
+- `map50_95_median`: `0.002420` ratio.
+- `inference_latency_ms_p95_median`: `68.303` ms/image.
+- `training_seconds_median`: `199.350` seconds.

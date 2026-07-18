@@ -1,6 +1,8 @@
 # #1 yolo-training-pipeline
 
-> **Benchmark pending on the rebuilt CPU image:** the publication gate requires three successful runs with held-out mAP50-95 and warmed p95 latency per image.
+> **Benchmark complete on image `sha256:2ca7c9aa87e9...`:** median held-out mAP50-95 `0.002420`; warmed p95 `68.303 ms/image` across three successful CPU runs.
+
+The final image is `1,842,427,744` bytes. It embeds the local font asset required by Ultralytics, so the default run performs no dataset, model-weight, or auxiliary font download.
 
 This repository proves the engineering path around YOLO training: deterministic local data, annotation validation, architecture-only initialization, CPU training, held-out evaluation, best-checkpoint reload, versioned checkpoint/manifest bundle, inference timing, and machine-readable evidence.
 
@@ -17,13 +19,13 @@ The default run needs no API key, GPU, cloud account, pretrained weight, dataset
 
 | Metric | Publication value | What it proves |
 |---|---:|---|
-| Held-out mAP50-95 | pending | Detection quality over IoU thresholds 0.50 through 0.95 |
-| Held-out mAP50 | pending | Easier-to-read localization/classification signal at IoU 0.50 |
-| Inference p95 | pending ms/image | Warmed batch-1 wall time after reloading the best checkpoint |
-| Training time | pending s | CPU train-to-best-checkpoint cost for the fixed fixture |
-| Checkpoint size | pending bytes | Artifact footprint carried into later serving repositories |
+| Held-out mAP50-95 median | 0.002420 ratio | Detection quality over IoU thresholds 0.50 through 0.95 |
+| Held-out mAP50 median | 0.008863 ratio | Easier-to-read localization/classification signal at IoU 0.50 |
+| Inference p95 median | 68.303 ms/image | Warmed batch-1 wall time after reloading the best checkpoint |
+| Training time median | 199.350 s | CPU train-to-best-checkpoint cost for the fixed fixture |
+| Checkpoint size | 5,333,317 bytes | Artifact footprint carried into later serving repositories |
 
-The committed publication result will be the median of three complete runs. Raw JSON remains under `benchmarks/results/`; failed runs are not replaced by a faster sample.
+The committed publication result is the median of three complete runs. Raw JSON remains under `benchmarks/results/`; failed runs are not replaced by a faster sample. All three runs used seed 42, four Torch threads, and the same image ID.
 
 ## Fixture
 

@@ -16,9 +16,9 @@
 ## Checks
 
 - Component pack selected: `applied-computer-vision`
-- Benchmark line: map50_95_median = pending
+- Benchmark line: map50_95_median = 0.002420; p95 = 68.303 ms/image
 - Voice verdict: aligned
 
 ## Remaining Risk
 
-The generated plan is a starting point. Re-run this tool or edit the artifacts when code, benchmark, or architecture decisions change.
+Docker build, Ruff, 34 tests, 93.51% focused coverage, and three full benchmark runs passed. Remaining release risks are the incomplete full-license packaging review, external reuse-kit synchronization, and public CI/repository publication gates.

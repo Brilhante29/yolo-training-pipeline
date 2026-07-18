@@ -51,10 +51,10 @@ The run SHALL require no secret, runtime network, host Python, GPU, cloud accoun
 - [x] Architecture, stack, license, and rejected alternatives answer the OpenSpec self-challenge.
 - [x] Dataset generator, annotation validation, pipeline, failure output, and aggregation are implemented.
 - [x] Pure tests cover annotation, split, deterministic manifest, percentile, settings, and summary behavior.
-- [ ] Pinned Docker image builds and imports CPU PyTorch/Ultralytics.
-- [ ] Lint and at least 90% focused pure-module coverage pass in the image.
-- [ ] Three complete train/validate/reload/predict runs succeed.
-- [ ] Summary JSON and README open with the confirmed median mAP50-95 and p95 latency.
+- [x] Pinned Docker image builds and imports CPU PyTorch/Ultralytics.
+- [x] Lint and at least 90% focused pure-module coverage pass in the image.
+- [x] Three complete train/validate/reload/predict runs succeed.
+- [x] Summary JSON and README open with the confirmed median mAP50-95 and p95 latency.
 - [ ] Full AGPL license text or canonical license packaging is confirmed.
 - [ ] Reuse kit improvements are published and synchronized by commit.
 - [ ] Public CI is green and its benchmark artifact is downloadable.

@@ -14,6 +14,7 @@ RUN python -m pip install --no-cache-dir --index-url https://download.pytorch.or
 
 COPY requirements.txt pyproject.toml ./
 RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN python -c "from pathlib import Path; import matplotlib.font_manager as fm; target = Path('/tmp/ultralytics/Ultralytics'); target.mkdir(parents=True, exist_ok=True); target.joinpath('Arial.ttf').write_bytes(Path(fm.findfont('DejaVu Sans')).read_bytes())"
 
 COPY src ./src
 COPY tests ./tests

@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for implementation; runtime benchmark confirmation pending.
+Accepted; runtime benchmark confirmed.
 
 ## Context
 

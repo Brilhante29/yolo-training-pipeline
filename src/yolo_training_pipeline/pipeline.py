@@ -12,7 +12,9 @@ from pathlib import Path
 from typing import Any
 
 import torch
-from ultralytics import YOLO, settings as ultralytics_settings
+from ultralytics import YOLO
+from ultralytics import settings as ultralytics_settings
+from ultralytics.utils import torch_utils
 
 from yolo_training_pipeline.artifact import build_model_manifest
 from yolo_training_pipeline.config import Settings
@@ -27,6 +29,7 @@ from yolo_training_pipeline.domain import nearest_rank_percentile
 def _configure_runtime(settings: Settings) -> None:
     random.seed(settings.seed)
     torch.manual_seed(settings.seed)
+    torch_utils.NUM_THREADS = settings.torch_threads
     torch.set_num_threads(settings.torch_threads)
     torch.set_num_interop_threads(1)
     torch.use_deterministic_algorithms(True, warn_only=True)

@@ -29,5 +29,5 @@ Establishes the reproducible training, held-out evaluation, checkpoint, and infe
 
 ## Public Proof
 
-- Benchmark: map50_95_median = pending
+- Benchmark: map50_95_median = 0.002420
 - Result path: `benchmarks/results/summary.json`
