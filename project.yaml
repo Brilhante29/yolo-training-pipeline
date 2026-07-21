@@ -10,7 +10,7 @@ program:
     - schema-versioned vision model bundle
     - held-out detection metric mapping
     - warmed per-image latency benchmark
-status: published
+status: benchmarked
 claim: "One local CPU Docker command generates a deterministic detection fixture, validates YOLO annotations, trains YOLO26 from architecture without downloading weights, evaluates held-out mAP, emits a verifiable model bundle, reloads the best checkpoint, and measures warmed inference latency."
 stack:
   - python-3.12.13
