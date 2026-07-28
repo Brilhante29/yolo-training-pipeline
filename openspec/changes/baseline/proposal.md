@@ -13,7 +13,7 @@ known portfolio risk.
 
 ## Scope
 
-- In scope: <scope>
+- In scope: Deterministic detection fixture generation, YOLO annotation validation, local training pipeline, and mAP evaluation.
 - Out of scope: paid credentials, unrelated infrastructure, and unmeasured features.
 
 ## Portfolio Impact
