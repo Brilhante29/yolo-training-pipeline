@@ -65,10 +65,26 @@ def _write_run(path: Path, map_value: float, latency: float, training: float) ->
         json.dumps(
             {
                 "timestamp": f"2026-07-15T00:00:0{path.stem[-1]}+00:00",
-                "environment": {"device": "cpu"},
+                "environment": {
+                    "batch_size": 8,
+                    "device": "cpu",
+                    "epochs": 25,
+                    "image_size": 160,
+                    "measured_images": 60,
+                    "seed": 42,
+                    "torch": "test",
+                    "torch_threads": 4,
+                    "torchvision": "test",
+                    "train_samples": 80,
+                    "ultralytics": "test",
+                    "validation_samples": 20,
+                    "warmup_images": 10,
+                },
                 "failures": 0,
                 "metrics": {
                     "map50_95": map_value,
+                    "map50": map_value + 0.1,
+                    "inference_latency_ms_p50": latency - 1.0,
                     "inference_latency_ms_p95": latency,
                     "training_seconds": training,
                 },
@@ -93,8 +109,11 @@ def test_aggregation_requires_three_successful_runs(tmp_path: Path) -> None:
 
     assert summary["metric"] == "map50_95_median"
     assert summary["value"] == 0.5
+    assert summary["samples"] == [0.4, 0.6, 0.5]
+    assert summary["metrics"]["map50_median"] == 0.6
     assert summary["metrics"]["inference_latency_ms_p95_median"] == 11.0
     assert summary["proof"]["dataset_sha256_identical"] is True
+    assert len(summary["results"][0]["sha256"]) == 64
 
 
 def test_aggregation_rejects_too_few_runs(tmp_path: Path) -> None:
@@ -111,4 +130,16 @@ def test_aggregation_rejects_failed_runs(tmp_path: Path) -> None:
     paths[0].write_text(json.dumps(failed), encoding="utf-8")
 
     with pytest.raises(ValueError, match="Failed runs"):
+        aggregate_results(paths)
+
+
+def test_aggregation_rejects_incomparable_runs(tmp_path: Path) -> None:
+    paths = [tmp_path / f"run-{index}.json" for index in range(1, 4)]
+    for path in paths:
+        _write_run(path, 0.5, 11.0, 31.0)
+    changed = json.loads(paths[2].read_text(encoding="utf-8"))
+    changed["environment"]["image_size"] = 320
+    paths[2].write_text(json.dumps(changed), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="not comparable"):
         aggregate_results(paths)

@@ -1,25 +1,11 @@
-# Reuse Map: #<id> <project-name>
+# Reuse Map: #1 yolo-training-pipeline
 
-## Kit Inputs
-
-| Concern | Source of truth | Project use |
+| Kit input or delta | Use | Resolution |
 |---|---|---|
-| Agent skills | `.codex/skills/` and `.claude/skills/` | select by problem and language |
-| Architecture | `decision-brain/` | record the chosen shape in SDD |
-| Stack and libraries | `.portfolio/decision-brain/` | justify against the benchmark |
-| Local-first cloud | `.portfolio/decision-brain/cloud-matrix.yaml` | keep provider ports replaceable |
-| API style | `decision-brain/api-style-matrix.yaml` | REST, GraphQL, gRPC, or events by need |
-| Messaging | `decision-brain/messaging-matrix.yaml` | Kafka/RabbitMQ only with a measured reason |
-| Benchmark contract | `contracts/benchmark-result.schema.json` | emit machine-readable evidence |
+| agent graph and architecture matrix | select pipeline and execute gates | reused |
+| Python computer-vision profile | deterministic Docker, tests and benchmark conventions | reused and improved |
+| vision model artifact contract | publish checkpoint bytes, SHA-256, classes and input metadata | reusable producer contract |
+| multi-run aggregate contract | bind three comparable runs and their hashes | reusable publication pattern |
+| synthetic fixture and training choices | prove this repository's pipeline only | keep project-local |
 
-## Project Delta
-
-List only what this project adds to the kit. If a pattern will be useful in another repository, patch the kit and link the change here instead of hiding it in project code.
-
-| Delta | Why it is project-specific or reusable | Action |
-|---|---|---|
-| _pending_ | _pending_ | `patch_now`, `backlog`, or `reject` |
-
-## Coupling Rule
-
-Domain code must not depend on infrastructure adapters, providers, brokers, HTTP frameworks, or model vendors. Dependencies point inward through stable ports. Reuse is accepted only when it reduces duplication without making the problem less clear.
+The reusable surface is a validated artifact/evidence contract. Model selection, fixture geometry and training hyperparameters are not shared abstractions.

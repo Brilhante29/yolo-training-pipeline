@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import statistics
 from collections.abc import Iterable
@@ -62,46 +63,88 @@ def aggregate_results(result_paths: list[Path]) -> dict[str, Any]:
     if failed:
         raise ValueError("Failed runs cannot be included in a successful summary")
 
+    comparable_environment_fields = (
+        "batch_size",
+        "device",
+        "epochs",
+        "image_size",
+        "measured_images",
+        "seed",
+        "torch",
+        "torch_threads",
+        "torchvision",
+        "train_samples",
+        "ultralytics",
+        "validation_samples",
+        "warmup_images",
+    )
+    signatures = {
+        tuple(run["environment"].get(field) for field in comparable_environment_fields)
+        for run in runs
+    }
+    dataset_hashes = {run["proof"]["dataset_sha256"] for run in runs}
+    architectures = {run["proof"]["model_architecture"] for run in runs}
+    if len(signatures) != 1 or len(dataset_hashes) != 1 or len(architectures) != 1:
+        raise ValueError("Runs are not comparable")
+
     map_values = [float(run["metrics"]["map50_95"]) for run in runs]
+    map50_values = [float(run["metrics"]["map50"]) for run in runs]
     latency_values = [
         float(run["metrics"]["inference_latency_ms_p95"]) for run in runs
+    ]
+    latency_p50_values = [
+        float(run["metrics"]["inference_latency_ms_p50"]) for run in runs
     ]
     training_values = [float(run["metrics"]["training_seconds"]) for run in runs]
     ordered_map = sorted(map_values)
     value = float(statistics.median(ordered_map))
+    metrics = {
+        "repetitions": len(runs),
+        "map50_95_median": round(value, 6),
+        "map50_95_min": round(min(map_values), 6),
+        "map50_95_max": round(max(map_values), 6),
+        "map50_median": round(float(statistics.median(map50_values)), 6),
+        "inference_latency_ms_p50_median": round(
+            float(statistics.median(latency_p50_values)), 3
+        ),
+        "inference_latency_ms_p95_median": round(
+            float(statistics.median(latency_values)), 3
+        ),
+        "training_seconds_median": round(
+            float(statistics.median(training_values)), 3
+        ),
+    }
     return {
         "project": "yolo-training-pipeline",
         "metric": "map50_95_median",
         "value": round(value, 6),
         "unit": "ratio",
         "timestamp": max(str(run["timestamp"]) for run in runs),
-        "command": "docker run --rm yolo-training-pipeline",
+        "command": (
+            "docker run --rm yolo-training-pipeline aggregate "
+            "--input-dir /results --output /results/summary.json"
+        ),
+        "repeat": len(runs),
+        "measured_iterations": len(runs),
+        "samples": [round(item, 6) for item in map_values],
         "environment": runs[0]["environment"],
         "failures": 0,
-        "metrics": {
-            "repetitions": len(runs),
-            "map50_95_median": round(value, 6),
-            "map50_95_min": round(min(map_values), 6),
-            "map50_95_max": round(max(map_values), 6),
-            "inference_latency_ms_p95_median": round(
-                float(statistics.median(latency_values)), 3
-            ),
-            "training_seconds_median": round(
-                float(statistics.median(training_values)), 3
-            ),
-        },
+        "metrics": metrics,
+        "summary": metrics,
         "proof": {
-            "dataset_sha256_identical": len(
-                {run["proof"]["dataset_sha256"] for run in runs}
-            )
-            == 1,
-            "model_architecture_identical": len(
-                {run["proof"]["model_architecture"] for run in runs}
-            )
-            == 1,
+            "dataset_sha256": next(iter(dataset_hashes)),
+            "dataset_sha256_identical": True,
+            "model_architecture": next(iter(architectures)),
+            "model_architecture_identical": True,
             "all_checkpoints_reloaded": all(
                 run["proof"]["checkpoint_reloaded"] for run in runs
             ),
         },
-        "results": [path.as_posix() for path in result_paths],
+        "results": [
+            {
+                "file": path.name,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            for path in result_paths
+        ],
     }

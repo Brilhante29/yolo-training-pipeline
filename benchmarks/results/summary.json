@@ -1,53 +1,76 @@
 {
-    "command":  "docker run --rm yolo-training-pipeline",
-    "environment":  {
-                        "architecture":  "x86_64",
-                        "batch_size":  8,
-                        "cpu_count":  16,
-                        "device":  "cpu",
-                        "epochs":  25,
-                        "image_size":  160,
-                        "measured_images":  60,
-                        "os":  "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.41",
-                        "python":  "3.12.13",
-                        "seed":  42,
-                        "torch":  "2.13.0+cpu",
-                        "torch_threads":  4,
-                        "torchvision":  "0.28.0+cpu",
-                        "train_samples":  80,
-                        "ultralytics":  "8.4.96",
-                        "validation_samples":  20,
-                        "warmup_images":  10
-                    },
-    "failures":  0,
-    "metric":  "map50_95_median",
-    "metrics":  {
-                    "inference_latency_ms_p95_median":  68.303,
-                    "map50_95_max":  0.00242,
-                    "map50_95_median":  0.00242,
-                    "map50_95_min":  0.00242,
-                    "repetitions":  3,
-                    "training_seconds_median":  199.35,
-                    "map50_median":  0.008863,
-                    "inference_latency_ms_p50_median":  34.192
-                },
-    "project":  "yolo-training-pipeline",
-    "proof":  {
-                  "all_checkpoints_reloaded":  true,
-                  "dataset_sha256_identical":  true,
-                  "model_architecture_identical":  true
-              },
-    "results":  [
-                    "/results/run-1.json",
-                    "/results/run-2.json",
-                    "/results/run-3.json"
-                ],
-    "timestamp":  "2026-07-18T18:37:24.126876+00:00",
-    "unit":  "ratio",
-    "value":  0.00242,
-    "image":  {
-                  "tag":  "yolo-training-pipeline",
-                  "id":  "sha256:2ca7c9aa87e939aa66f09f41ae7d098ea864ce7d8dd19db6491e982ff74c412f",
-                  "size_bytes":  1842427744
-              }
+  "command": "docker run --rm yolo-training-pipeline aggregate --input-dir /results --output /results/summary.json",
+  "environment": {
+    "architecture": "x86_64",
+    "batch_size": 8,
+    "cpu_count": 16,
+    "device": "cpu",
+    "epochs": 25,
+    "image_size": 160,
+    "measured_images": 60,
+    "os": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "python": "3.12.13",
+    "seed": 42,
+    "torch": "2.13.0+cpu",
+    "torch_threads": 4,
+    "torchvision": "0.28.0+cpu",
+    "train_samples": 80,
+    "ultralytics": "8.4.96",
+    "validation_samples": 20,
+    "warmup_images": 10
+  },
+  "failures": 0,
+  "measured_iterations": 3,
+  "metric": "map50_95_median",
+  "metrics": {
+    "inference_latency_ms_p50_median": 34.192,
+    "inference_latency_ms_p95_median": 68.303,
+    "map50_95_max": 0.00242,
+    "map50_95_median": 0.00242,
+    "map50_95_min": 0.00242,
+    "map50_median": 0.008863,
+    "repetitions": 3,
+    "training_seconds_median": 199.35
+  },
+  "project": "yolo-training-pipeline",
+  "proof": {
+    "all_checkpoints_reloaded": true,
+    "dataset_sha256": "36d9bcc919890534b1fd1d0002bf75bd5274c6ce49ade1a22bc5ad73e06d4225",
+    "dataset_sha256_identical": true,
+    "model_architecture": "yolo26n.yaml",
+    "model_architecture_identical": true
+  },
+  "repeat": 3,
+  "results": [
+    {
+      "file": "run-1.json",
+      "sha256": "38fde71991957261b11580332f356947b5e7dc294fef80cba8130bc98ba19712"
+    },
+    {
+      "file": "run-2.json",
+      "sha256": "9405fa557f54a37be8de1bff5f410d9588d553b348ff21e296a697f50d959851"
+    },
+    {
+      "file": "run-3.json",
+      "sha256": "e057620d19723ac602a0f1d0b37381f8bdda87a6dda205da6161d64bd4d83532"
+    }
+  ],
+  "samples": [
+    0.00242,
+    0.00242,
+    0.00242
+  ],
+  "summary": {
+    "inference_latency_ms_p50_median": 34.192,
+    "inference_latency_ms_p95_median": 68.303,
+    "map50_95_max": 0.00242,
+    "map50_95_median": 0.00242,
+    "map50_95_min": 0.00242,
+    "map50_median": 0.008863,
+    "repetitions": 3,
+    "training_seconds_median": 199.35
+  },
+  "timestamp": "2026-07-18T18:37:24.126876+00:00",
+  "unit": "ratio",
+  "value": 0.00242
 }

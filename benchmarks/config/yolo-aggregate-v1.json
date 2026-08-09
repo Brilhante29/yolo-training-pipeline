@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "benchmark_id": "yolo-training-aggregate-v1",
+  "workload_version": "synthetic-detection-80-train-20-val-3-runs",
+  "runs": 3,
+  "seed": 42,
+  "image_size": 160,
+  "warmup_images_per_run": 10,
+  "measured_images_per_run": 60,
+  "comparability_key": "yolo-training:yolo26n:cpu:160px:3-runs"
+}

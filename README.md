@@ -1,8 +1,8 @@
 # #1 yolo-training-pipeline
 
-> **Benchmark complete on image `sha256:2ca7c9aa87e9...`:** median held-out mAP50-95 `0.002420`; warmed p95 `68.303 ms/image` across three successful CPU runs.
+> **Measured baseline:** median held-out mAP50-95 `0.002420`; warmed p95 `68.303 ms/image` across three complete CPU runs.
 
-The final image is `1,842,427,744` bytes. It embeds the local font asset required by Ultralytics, so the default run performs no dataset, model-weight, or auxiliary font download.
+The container embeds the local font asset required by Ultralytics, so the default run performs no dataset, model-weight, or auxiliary font download. Publication evidence binds the source commit, OCI image digest, raw run files, workload configuration, dependency lock and aggregate result.
 
 This repository proves the engineering path around YOLO training: deterministic local data, annotation validation, architecture-only initialization, CPU training, held-out evaluation, best-checkpoint reload, versioned checkpoint/manifest bundle, inference timing, and machine-readable evidence.
 

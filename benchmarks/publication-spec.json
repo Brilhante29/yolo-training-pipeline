@@ -1,0 +1,16 @@
+{
+  "project": "yolo-training-pipeline",
+  "benchmark_id": "yolo-training-aggregate-v1",
+  "primary_metric": "map50_95_median",
+  "v1_path": "benchmarks/results/summary.json",
+  "v2_path": "benchmarks/publication/yolo-training-v2.json",
+  "config_path": "benchmarks/config/yolo-aggregate-v1.json",
+  "fixture_path": "benchmarks/results",
+  "lock_path": "requirements.txt",
+  "repeat": 3,
+  "measured_iterations": 3,
+  "warmup_iterations": 10,
+  "concurrency": 1,
+  "comparability_key": "yolo-training:yolo26n:cpu:160px:3-runs",
+  "readme_values": ["0.002420", "68.303", "three complete runs"]
+}
