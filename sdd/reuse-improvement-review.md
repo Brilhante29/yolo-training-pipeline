@@ -8,9 +8,9 @@ Project: `1 - yolo-training-pipeline`
 - [x] After research: recorded framework, runtime, dataset, benchmark, and license forces.
 - [x] Before implementation: patched a reusable computer-vision skill and standard into the kit.
 - [x] During specification: rejected serving, registry, export, GPU, cloud, broker, and notebook scope.
-- [ ] After first image: confirm dependency pins, packaged architecture, and offline behavior.
-- [ ] After benchmark: patch only repeated CV evidence gaps into the kit.
-- [ ] Before publication: synchronize the final kit commit and validate license packaging.
+- [x] After first image: confirmed dependency pins, packaged architecture, and offline behavior.
+- [x] After benchmark: patched only repeated CV evidence and artifact-contract gaps into the kit queue.
+- [x] Before publication: validated AGPL packaging, attribution, source availability, Docker and provenance gates.
 
 ## Findings
 

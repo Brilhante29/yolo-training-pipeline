@@ -1,0 +1,60 @@
+{
+  "benchmark_id": "yolo-training-aggregate-v1",
+  "comparability_key": "yolo-training:yolo26n:cpu:160px:3-runs",
+  "environment": {
+    "architecture": "amd64",
+    "hardware_class": "docker-desktop-cpu",
+    "runtime": "python-3.12.13+torch-2.13.0-cpu"
+  },
+  "execution": {
+    "command": "docker run --name pub_yolo_a7ca83e --network none -v 'C:\\Users\\Guilherme\\Desktop\\repos-github\\yolo-training-pipeline\\benchmarks\\results:/results:ro' yolo-training-pipeline:source-a7ca83e aggregate --input-dir /results --output /tmp/summary.json",
+    "duration_seconds": 4.479431,
+    "exit_code": 0,
+    "repeat": 3,
+    "started_at": "2026-08-09T23:20:17.744679Z"
+  },
+  "metrics": [
+    {
+      "direction": "higher_is_better",
+      "failures": 0,
+      "name": "map50_95_median",
+      "samples": [
+        0.00242,
+        0.00242,
+        0.00242
+      ],
+      "summary": {
+        "inference_latency_ms_p50_median": 34.192,
+        "inference_latency_ms_p95_median": 68.303,
+        "map50_95_max": 0.00242,
+        "map50_95_median": 0.00242,
+        "map50_95_min": 0.00242,
+        "map50_median": 0.008863,
+        "repetitions": 3,
+        "training_seconds_median": 199.35
+      },
+      "unit": "ratio",
+      "value": 0.00242
+    }
+  ],
+  "project": "yolo-training-pipeline",
+  "provenance": {
+    "artifact_digest": "sha256:b679abc9748492bcbf6ab617d6015b986b42f47e9e93856a5b03517aa743fca7",
+    "clean_tree": true,
+    "dependency_lock_digest": "sha256:bae028004fe58048cce83ac26e25d0ecc5522b5c8fc2230f74e0142dc703d4ce",
+    "image_digest": "sha256:926babbaf404a8d5268449e129674846c3cc2d2677fc440f7439a9d42e812aeb",
+    "image_ref": "yolo-training-pipeline:source-a7ca83e@sha256:926babbaf404a8d5268449e129674846c3cc2d2677fc440f7439a9d42e812aeb",
+    "producer": "local",
+    "source_commit": "a7ca83e52145f726346a762294fc8d3ad1c7d590"
+  },
+  "run_id": "9673b758-636e-44a7-8a44-5f53f0da0fec",
+  "schema_version": 2,
+  "workload": {
+    "concurrency": 1,
+    "config_digest": "sha256:b5b1e97b18fcda33980045393b5056554508d0579f8c966a2e6a0cac06c8c4a1",
+    "fixture_digest": "sha256:e8a9f193c74d830b5bbc06ed6554f786ce91c62076028c3854e013201f319d1d",
+    "measured_iterations": 3,
+    "version": "1.0.0",
+    "warmup_iterations": 10
+  }
+}

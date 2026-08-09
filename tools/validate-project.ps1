@@ -177,10 +177,23 @@ if ($manifestResultPath -ne "") {
         if ($null -ne $metricProperty) {
           $resultValue = $metricProperty.Value
         }
+      } elseif (
+        $primaryResult.schema_version -eq 2 -and
+        $primaryResult.PSObject.Properties.Name -contains "metrics"
+      ) {
+        $metricEntries = @(
+          $primaryResult.metrics | Where-Object {
+            [string]$_.name -eq $manifestPrimaryMetric
+          }
+        )
+        if ($metricEntries.Count -eq 1) {
+          $resultMetric = [string]$metricEntries[0].name
+          $resultValue = $metricEntries[0].value
+        }
       }
 
       if ($resultMetric -eq "" -or $null -eq $resultValue) {
-        Add-Failure "Benchmark result must expose metric/value or primary_metric with its value"
+        Add-Failure "Benchmark result must expose V1 metric/value or one matching V2 metric"
       } else {
         if ($manifestPrimaryMetric -ne "" -and $resultMetric -ne $manifestPrimaryMetric) {
           Add-Failure "Benchmark metric mismatch: project.yaml=$manifestPrimaryMetric result=$resultMetric"
