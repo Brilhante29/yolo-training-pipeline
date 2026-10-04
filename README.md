@@ -1,41 +1,53 @@
-# #1 yolo-training-pipeline
+# YOLO Training Pipeline: Reproducible CPU Path from Data to Versioned Checkpoint
 
-> **Measured baseline:** median held-out mAP50-95 `0.002420`; warmed p95 `68.303 ms/image` across three complete CPU runs.
+**Seeded data to a versioned, reloadable YOLO checkpoint in one offline container**, with warmed inference p95 `68.303 ms/image` across three complete CPU runs. The held-out mAP50-95 of `0.002420` comes from an 80-image from-scratch smoke run: it proves the pipeline executes end to end and is not a detector-quality claim.
 
-The container embeds the local font asset required by Ultralytics, so the default run performs no dataset, model-weight, or auxiliary font download. Publication evidence binds the source commit, OCI image digest, raw run files, workload configuration, dependency lock and aggregate result.
+[![validate](https://github.com/Brilhante29/yolo-training-pipeline/actions/workflows/validate.yml/badge.svg)](https://github.com/Brilhante29/yolo-training-pipeline/actions/workflows/validate.yml)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
 
-This repository proves the engineering path around YOLO training: deterministic local data, annotation validation, architecture-only initialization, CPU training, held-out evaluation, best-checkpoint reload, versioned checkpoint/manifest bundle, inference timing, and machine-readable evidence.
+## Why this exists
 
-## Run
+In applied computer-vision work (I have co-authored YOLO-based detection research in medical imaging), the model is rarely what breaks. What breaks is everything around it: annotations that silently drift from the YOLO format, validation images that also appear in training, a "best" checkpoint nobody can reload, or a result that cannot be rerun because the run downloaded mutable weights.
+
+This repository is that surrounding engineering, made reproducible:
+
+- a seeded generator produces images and YOLO labels, with content hashes for every file;
+- train and validation hashes must be disjoint before training starts;
+- the model is initialized from architecture YAML only, so no mutable pretrained weight is downloaded;
+- the best checkpoint is reloaded, warmed up, timed, and packaged with a manifest that [vision-serving-fastapi](https://github.com/Brilhante29/vision-serving-fastapi) verifies before serving.
+
+## Results
+
+The publication value is the median of three complete runs (seed 42, four Torch threads, same image ID). Failed runs are never replaced by a faster sample.
+
+| Metric | Publication value | What it shows |
+|---|---:|---|
+| Inference p95 median | 68.303 ms/image | Warmed batch-1 wall time after reloading the best checkpoint |
+| Training time median | 199.350 s | CPU cost from data to best checkpoint on the fixed fixture |
+| Checkpoint size | 5,333,317 bytes | Artifact footprint carried into serving |
+| Held-out mAP50 median | 0.008863 ratio | Smoke-run signal at IoU 0.50 |
+| Held-out mAP50-95 median | 0.002420 ratio | Smoke-run signal over IoU 0.50 to 0.95 |
+
+Why mAP is near zero: 80 training images at 160x160 pixels, 25 CPU epochs, and no pretrained backbone. Quality is out of scope on purpose; with pretrained weights and a real dataset, the same pipeline is where a meaningful mAP would be produced.
+
+## Quickstart
 
 ```bash
 docker build -t yolo-training-pipeline .
 docker run --rm yolo-training-pipeline
 ```
 
-The default run needs no API key, GPU, cloud account, pretrained weight, dataset download, broker, database, or host Python. Docker is the same entrypoint on Linux, macOS, and Windows.
+The default run needs no API key, GPU, cloud account, pretrained weight, dataset download, database, or host Python. The container embeds the font asset Ultralytics expects, so nothing is fetched at runtime.
 
-## Proof Contract
+Keep artifacts and aggregate runs (bind-mount `/results` and `/artifacts` with your shell's syntax):
 
-| Metric | Publication value | What it proves |
-|---|---:|---|
-| Held-out mAP50-95 median | 0.002420 ratio | Detection quality over IoU thresholds 0.50 through 0.95 |
-| Held-out mAP50 median | 0.008863 ratio | Easier-to-read localization/classification signal at IoU 0.50 |
-| Inference p95 median | 68.303 ms/image | Warmed batch-1 wall time after reloading the best checkpoint |
-| Training time median | 199.350 s | CPU train-to-best-checkpoint cost for the fixed fixture |
-| Checkpoint size | 5,333,317 bytes | Artifact footprint carried into later serving repositories |
+```bash
+# BENCHMARK_OUTPUT keeps one run; MODEL_ARTIFACT_DIR keeps best.pt and model-manifest.json
+docker run --rm yolo-training-pipeline aggregate --input-dir /results --output /results/summary.json
+```
 
-The committed publication result is the median of three complete runs. Raw JSON remains under `benchmarks/results/`; failed runs are not replaced by a faster sample. All three runs used seed 42, four Torch threads, and the same image ID.
-
-## Fixture
-
-The runtime generates 80 training and 20 held-out validation images at 160 x 160 pixels. Each image contains one warm rectangle or cool ellipse over deterministic distractors, represented in normalized YOLO detection format.
-
-The generator records image and label hashes, class map, dimensions, seed, split counts, annotation license, and a dataset hash. Train and validation content hashes must be disjoint before training starts.
-
-This synthetic fixture measures pipeline correctness and reproducibility. Its mAP is not evidence of performance on traffic, medical, industrial, or natural-image data.
-
-## System
+## How it works
 
 ```mermaid
 flowchart LR
@@ -51,42 +63,64 @@ flowchart LR
   H --> I
 ```
 
-Pipeline architecture is primary because ordered artifact transitions dominate. Pure code owns annotation rules, percentile calculation, and multi-run aggregation. Ultralytics owns training, validation, and prediction; wrapping those calls behind empty interfaces would add indirection without substitution value.
+The fixture holds 80 training and 20 validation images at 160x160, each with one warm rectangle or cool ellipse over deterministic distractors. Pure code owns annotation rules, percentile math, and multi-run aggregation; Ultralytics owns training, validation, and prediction, and is called directly rather than hidden behind interfaces with nothing to substitute.
 
-## Decisions
+## Design decisions
 
-- **YOLO26n from YAML:** proves training without downloading mutable pretrained weights.
-- **Ultralytics 8.4.96:** matches the named YOLO workflow and exposes mAP, validation, and prediction surfaces.
-- **AGPL-3.0-only:** aligns the repository with the open-source Ultralytics license; commercial use may require a separate Ultralytics Enterprise license.
-- **CPU-only PyTorch:** keeps the default path universal and CI-reproducible. GPU performance is a different benchmark.
-- **No COCO8 download:** the official dataset is useful for smoke testing, but first use is network-dependent and its validation split has four images.
-- **No API/export/registry:** #7 consumes the checkpoint for serving; #21 owns lifecycle governance; export comparison deserves its own measured question.
-- **No cloud:** no AWS behavior exists. Kumo becomes relevant only when an actual AWS storage or training contract enters scope.
+| Decision | Why | Rejected |
+|---|---|---|
+| YOLO26n from YAML | Proves training without mutable pretrained downloads | Pretrained weights fetched at runtime |
+| Ultralytics 8.4.96, CPU PyTorch | Universal, CI-reproducible default path | GPU-only path (a different benchmark) |
+| Generated fixture | Offline, hash-verified, leakage-checked | COCO8 download (network-dependent, four validation images) |
+| AGPL-3.0-only | Matches the open-source Ultralytics license | Permissive license incompatible with the dependency |
+| No API, registry, or export here | Serving and lifecycle live in [vision-serving-fastapi](https://github.com/Brilhante29/vision-serving-fastapi) and [mlops-end2end](https://github.com/Brilhante29/mlops-end2end) | One repository doing everything |
 
-OpenSpec records the self-challenge and revisit triggers; SDD records the implementation and benchmark contract.
-
-## Evidence Output
-
-Set `BENCHMARK_OUTPUT` to a mounted path to retain one run. After three files named `run-*.json`, aggregate them with the same image:
-
-```bash
-docker run --rm yolo-training-pipeline aggregate --input-dir /results --output /results/summary.json
-```
-
-A bind mount is required for `/results`; use the native Docker bind-mount syntax of the host shell. The default command still prints and writes one complete result inside the container. Set `MODEL_ARTIFACT_DIR` to a mounted `/artifacts` directory to retain `best.pt` and `model-manifest.json` for #7.
-
-## Verification
+## Testing
 
 ```bash
 docker run --rm --entrypoint ruff yolo-training-pipeline check src tests
 docker run --rm --entrypoint pytest yolo-training-pipeline -q
-docker run --rm --entrypoint pytest yolo-training-pipeline tests/test_domain.py tests/test_dataset.py tests/test_artifact.py tests/test_config.py --cov=yolo_training_pipeline.domain --cov=yolo_training_pipeline.dataset --cov=yolo_training_pipeline.artifact --cov=yolo_training_pipeline.config --cov-fail-under=90
 ```
 
-Pure tests do not train a model. The default Docker run is the integration proof that generates data, trains, validates, reloads the checkpoint, predicts, and emits JSON.
+Unit tests cover annotations, split hashing, artifacts, and configuration without training, with a 90% coverage gate on the pure modules. The default Docker run is the integration test: it generates data, trains, validates, reloads, predicts, and emits JSON.
 
-## Reuse
+## Limitations
 
-This repository created the reusable `python-computer-vision` skill and computer-vision standard in `portfolio-reuse-kit`. Product-specific generator, training choices, fixture, and checkpoint code stay here until another project demonstrates stable duplication.
+- Synthetic shapes only; the mAP is not evidence for traffic, medical, industrial, or natural images.
+- CPU timing on one machine class; GPU throughput is not measured.
+- Commercial use may require a separate Ultralytics license.
 
-See [REFERENCES.md](REFERENCES.md) for framework, metric, runtime, license, and organizational references.
+## Reproducibility
+
+- Raw runs: [`benchmarks/results/`](benchmarks/results/).
+- Publication evidence (source commit, OCI image digest, workload, lock): [`benchmarks/publication/yolo-training-v2.json`](benchmarks/publication/yolo-training-v2.json).
+
+## Project structure
+
+```text
+src/yolo_training_pipeline/   dataset, domain, config, pipeline, artifact, CLI
+tests/                        unit tests for the pure modules
+benchmarks/                   raw runs and V2 publication evidence
+tools/                        benchmark and publication validators
+sdd/  openspec/               specification, decisions, revisit triggers
+```
+
+## How this repository is built
+
+The project follows the spec-driven workflow of [portfolio-reuse-kit](https://github.com/Brilhante29/portfolio-reuse-kit), where this repository originated the shared `python-computer-vision` standard. Requirements and decisions live in [`sdd/`](sdd) and [`openspec/`](openspec), and [`project.yaml`](project.yaml) records the architecture, stack, and rejected alternatives. Development is AI-assisted and human-governed: [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md) hold the coding-agent instructions, while tests, validators, and CI decide what gets published.
+
+## Related work
+
+- [Health of Things Melanoma Detection System](https://doi.org/10.3389/frcmn.2024.1376191) (YOLOv8 at the edge), Frontiers in Communications and Networks, 2024.
+- [vision-serving-fastapi](https://github.com/Brilhante29/vision-serving-fastapi): serves the checkpoint this pipeline produces.
+
+See [`REFERENCES.md`](REFERENCES.md) for framework, metric, runtime, and license references.
+
+## Author
+
+**Guilherme Brilhante**, software engineer working on scalable backends and production AI.
+[LinkedIn](https://www.linkedin.com/in/guilhermefreirebrilhanteseveriano/) · [GitHub](https://github.com/Brilhante29) · [Publications](https://dblp.org/pid/353/6812.html)
+
+## License
+
+[AGPL-3.0-only](LICENSE), aligned with Ultralytics.
